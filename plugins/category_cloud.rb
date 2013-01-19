@@ -49,6 +49,7 @@ module Jekyll
       @opts['tcolor1'] = '#333333'
       @opts['tcolor2'] = '#333333'
       @opts['hicolor'] = '#000000'
+      @tag_name = tag_name;
     
       opt_names = ['bgcolor', 'tcolor1', 'tcolor2', 'hicolor']
 
@@ -71,11 +72,20 @@ module Jekyll
       lists = {}
       max, min = 1, 1
       config = context.registers[:site].config
-      category_dir = config['url'] + config['root'] + config['category_dir'] + '/'
-      categories = context.registers[:site].categories
-      categories.keys.sort_by{ |str| str.downcase }.each do |category|
-        count = categories[category].count
-        lists[category] = count
+      
+      if @tag_name == 'tag_cloud'
+        cloud_dir = config['tag_dir']
+        cloud = context.registers[:site].tags
+      else
+        cloud_dir = config['category_dir']
+        cloud = context.registers[:site].categories
+      end
+      
+      cloud_dir = config['url'] + config['root'] + cloud_dir + '/'
+      #categories = context.registers[:site].categories
+      cloud.keys.sort_by{ |str| str.downcase }.each do |item|
+        count = cloud[item].count
+        lists[item] = count
         max = count if count > max
       end
 
@@ -99,11 +109,11 @@ module Jekyll
       tagcloud << '<tags>'
 
 
-      lists.each do | category, counter |
-        url = category_dir + category.gsub(/_|\P{Word}/u, '-').gsub(/-{2,}/u, '-').downcase
+      lists.each do | item, counter |
+        url = cloud_dir + item.gsub(/_|\P{Word}/u, '-').gsub(/-{2,}/u, '-').downcase
         style = "font-size: #{10 + (40 * Float(counter)/max)}%"
 
-        tagcloud << "<a href='#{url}' style='#{style}'>#{category}"
+        tagcloud << "<a href='#{url}' style='#{style}'>#{item}"
         tagcloud << "</a> "
 
       end
@@ -121,3 +131,4 @@ module Jekyll
 end
 
 Liquid::Template.register_tag('category_cloud', Jekyll::CategoryCumulusCloud)
+Liquid::Template.register_tag('tag_cloud', Jekyll::CategoryCumulusCloud)

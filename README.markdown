@@ -10,7 +10,8 @@ Description:
 
 Demo:
 --------
-http://joseph.nlpweb.org/blog
+http://joseph.nlpweb.org/blog    
+http://blog.ashwani.co.in
 
 Syntax:
 -------
